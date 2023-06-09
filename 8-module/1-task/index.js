@@ -1,3 +1,4 @@
+
 import createElement from '../../assets/lib/create-element.js';
 
 export default class CartIcon {
@@ -39,6 +40,36 @@ export default class CartIcon {
   }
 
   updatePosition() {
-    // ваш код ...
+    let initialTopCoord = this.elem.getBoundingClientRect().top + window.pageYOffset;
+    let leftIndent = Math.min(
+      document.querySelector('.container').getBoundingClientRect().right + 20,
+      document.documentElement.clientWidth - this.elem.offsetWidth - 10
+    ) + 'px';
+
+    
+      this.initialTopCoord = this.elem.getBoundingClientRect().top + window.pageYOffset;
+  
+    //начало перемещения корзины
+  
+    if (window.pageYOffset > initialTopCoord) {
+      Object.assign(this.elem.style, {
+        position: 'fixed',
+        top: '50px',
+        zIndex: 1e3,
+        right: '10px',
+        left: leftIndent
+      });
+    } else {
+      // корзина сверху
+      this.zeroPosition();
+    }
+  }
+  zeroPosition() {
+    Object.assign(this.elem.style, {
+      position: '',
+      top: '',
+      left: '',
+      zIndex: ''
+    });
   }
 }
