@@ -9,56 +9,52 @@ export default class Cart {
     if (!product) {
       return;
     }
-
-    let cartItem = this.cartItems.find(
-      item => item.product.id === product.id
-    );
-
-    if (!cartItem) {
-      cartItem = {
-        product,
-        count: 1
-      };
-      this.cartItems.push(cartItem);
+    let productCheck = this.cartItems.find((item) => {
+      return item.product.id === product.id;
+    });
+    if (productCheck) {
+      productCheck.count++;
     } else {
-      cartItem.count++;
+      this.cartItems.push({ product, count: 1 });
     }
-
-    this.onProductUpdate(cartItem);
+    this.onProductUpdate(this.cartItem);
   }
 
   updateProductCount(productId, amount) {
-    let cartItem = this.cartItems.find((cart) => cart.product.id == productId);
-    cartItem.count += amount;
-    if (cartItem.count == 0) {
-      this.cartItems.splice(this.cartItems.indexOf(cartItem), 1);
+    let productUpdate = this.cartItems.find((item) => {
+      return item.product.id === productId;
+    });
+    if (productUpdate) {
+      productUpdate.count += amount;
     }
-    this.onProductUpdate(cartItem);
+    let productDelete = this.cartItems.findIndex((item) => item.count < 1);
+    if (productDelete > -1) {
+      this.cartItems.splice(productDelete, 1);
+    }
+    this.onProductUpdate(this.cartItem);
   }
 
   isEmpty() {
-    if (this.cartItems.length > 0) {
+    for (let key of this.cartItems) {
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   getTotalCount() {
-    let totalCount = 0;
-    this.cartItems.forEach((cartItem) => {
-      totalCount += cartItem.count;
-    });
+    let totalCount = this.cartItems.reduce(
+      (value, { product, count }) => value + count,
+      0
+    );
     return totalCount;
   }
 
   getTotalPrice() {
-    let totalPrice = 0;
-    this.cartItems.forEach((cartItem) => {
-      totalPrice += cartItem.product.price * cartItem.count;
-    });
+    let totalPrice = this.cartItems.reduce(
+      (value, { product, count }) => value + count * product.price,
+      0
+    );
     return totalPrice;
-   
   }
 
   onProductUpdate(cartItem) {
